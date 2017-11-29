@@ -29,9 +29,9 @@ import (
 
 func main() {
 	app, err := NewKitchenSink(
-		"cf4558ccb428b620d350958982aff369",
-		"Obb9/VQi9jJSsLTFmnK0tKADZhM6vnDUa0qCEdK5G1t4e3bgszrWQMnGcrKXF1GTJTrdd92LijNTUq8sA1cP6IjrwZNivjWKkRpH/623CO5yPENHcX74i9oe0gkj6lPyDoCLnIEhLk41JtKQJwCDnwdB04t89/1O/w1cDnyilFU=",
-		"127.0.0.1",
+		os.Getenv("CHANNEL_SECRET"),
+		os.Getenv("CHANNEL_TOKEN"),
+		os.Getenv("APP_BASE_URL"),
 	)
 	if err != nil {
 		log.Fatal(err)
@@ -47,7 +47,7 @@ func main() {
 	http.HandleFunc("/callback", app.Callback)
 	// This is just a sample code.
 	// For actually use, you must support HTTPS by using `ListenAndServeTLS`, reverse proxy or etc.
-	if err := http.ListenAndServe(":443", nil); err != nil {
+	if err := http.ListenAndServe(":"+os.Getenv("PORT"), nil); err != nil {
 		log.Fatal(err)
 	}
 }
