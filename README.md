@@ -1,128 +1,39 @@
-# line-bot-sdk-go
 
-[![Build Status](https://travis-ci.org/line/line-bot-sdk-go.svg?branch=master)](https://travis-ci.org/line/line-bot-sdk-go)
+# go-getting-started
 
-Go SDK for the LINE Messaging API
+A barebones Go app, which can easily be deployed to Heroku.
 
+This application supports the [Getting Started with Go on Heroku](https://devcenter.heroku.com/articles/getting-started-with-go) article - check it out.
 
-## About LINE Messaging API
+## Running Locally
 
-See the official API documentation for more information.
-
-English: https://developers.line.me/en/docs/messaging-api/reference/<br>
-Japanese: https://developers.line.me/ja/docs/messaging-api/reference/
-
-## Installation ##
+Make sure you have [Go](http://golang.org/doc/install) and the [Heroku Toolbelt](https://toolbelt.heroku.com/) installed.
 
 ```sh
-$ go get github.com/line/line-bot-sdk-go/linebot
+$ go get -u github.com/heroku/go-getting-started
+$ cd $GOPATH/src/github.com/heroku/go-getting-started
+$ heroku local
 ```
 
-## Configuration ##
+Your app should now be running on [localhost:5000](http://localhost:5000/).
 
-```go
-import (
-	"github.com/line/line-bot-sdk-go/linebot"
-)
+You should also install [govendor](https://github.com/kardianos/govendor) if you are going to add any dependencies to the sample app.
 
-func main() {
-	bot, err := linebot.New("<channel secret>", "<channel access token>")
-	...
-}
+## Deploying to Heroku
 
+```sh
+$ heroku create
+$ git push heroku master
+$ heroku open
 ```
 
-### Configuration with http.Client ###
+or
 
-```go
-	client := &http.Client{}
-	bot, err := linebot.New("<channel secret>", "<channel accsss token>", linebot.WithHTTPClient(client))
-	...
-```
+[![Deploy](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy)
 
-## How to start ##
 
-The LINE Messaging API uses the JSON data format.
-```ParseRequest()``` will help you to parse the ```*http.Request``` content and return a slice of Pointer point to Event Object.
+## Documentation
 
-```go
-	events, err := bot.ParseRequest(req)
-	if err != nil {
-		// Do something when something bad happened.
-	}
-```
+For more information about using Go on Heroku, see these Dev Center articles:
 
-The LINE Messaging API defines 7 types of event - ```EventTypeMessage```, ```EventTypeFollow```, ```EventTypeUnfollow```, ```EventTypeJoin```, ```EventTypeLeave```, ```EventTypePostback```, ```EventTypeBeacon```. You can check the event type by using ```event.Type```
-
-```go
-	for _, event := range events {
-		if event.Type == linebot.EventTypeMessage {
-			// Do Something...
-		}
-	}
-```
-
-### Receiver ###
-
-To send a message to a user, group, or room, you need either an ID
-
-```go
-	userID := event.Source.UserID
-	groupID := event.Source.GroupID
-	RoomID := event.Source.RoomID
-```
-
-or a reply token.
-
-```go
-	replyToken := event.ReplyToken
-```
-
-### Create message ###
-
-The LINE Messaging API provides various types of message. To create a message, use ```New<Type>Message()```.
-
-```go
-	leftBtn := linebot.NewMessageTemplateAction("left", "left clicked")
-	rightBtn := linebot.NewMessageTemplateAction("right", "right clicked")
-
-	template := linebot.NewConfirmTemplate("Hello World", leftBtn, rightBtn)
-
-	messgage := linebot.NewTemplateMessage("Sorry :(, please update your app.", template)
-```
-
-### Send message ###
-
-With an ID, you can send message using ```PushMessage()```
-
-```go
-	var messages []linebot.Message
-
-	// append some message to messages
-
-	_, err := bot.PushMessage(ID, messages...).Do()
-	if err != nil {
-		// Do something when some bad happened
-	}
-```
-
-With a reply token, you can reply to messages using ```ReplyMessage()```
-
-```go
-	var messages []linebot.Message
-
-	// append some message to messages
-
-	_, err := bot.ReplyMessage(replyToken, messages...).Do()
-	if err != nil {
-		// Do something when some bad happened
-	}
-```
-
-## Requirements
-
-This library requires Go 1.6 or later.
-
-## LICENSE
-
-See LICENSE.txt
+- [Go on Heroku](https://devcenter.heroku.com/categories/go)
