@@ -1,3 +1,17 @@
+// Copyright 2016 LINE Corporation
+//
+// LINE Corporation licenses this file to you under the Apache License,
+// version 2.0 (the "License"); you may not use this file except in compliance
+// with the License. You may obtain a copy of the License at:
+//
+//   http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+// WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+// License for the specific language governing permissions and limitations
+// under the License.
+
 package main
 
 import (
@@ -17,7 +31,7 @@ func main() {
 	app, err := NewKitchenSink(
 		"cf4558ccb428b620d350958982aff369",
 		"Obb9/VQi9jJSsLTFmnK0tKADZhM6vnDUa0qCEdK5G1t4e3bgszrWQMnGcrKXF1GTJTrdd92LijNTUq8sA1cP6IjrwZNivjWKkRpH/623CO5yPENHcX74i9oe0gkj6lPyDoCLnIEhLk41JtKQJwCDnwdB04t89/1O/w1cDnyilFU=",
-		"peaceful-shelf-33227.herokuapp.com",
+		"172.17.66.115",
 	)
 	if err != nil {
 		log.Fatal(err)
@@ -33,7 +47,9 @@ func main() {
 	http.HandleFunc("/callback", app.Callback)
 	// This is just a sample code.
 	// For actually use, you must support HTTPS by using `ListenAndServeTLS`, reverse proxy or etc.
-	if err := http.ListenAndServe(":"+os.Getenv("PORT"), nil); err != nil {
+	//if err := http.ListenAndServe(":8877", nil); err != nil {
+	if err := http.ListenAndServeTLS(":443", "server.crt", "server.key", nil); err != nil {
+		fmt.Println("YOYO ERROR")
 		log.Fatal(err)
 	}
 }
@@ -141,9 +157,13 @@ func (app *KitchenSink) Callback(w http.ResponseWriter, r *http.Request) {
 				log.Print(err)
 			}
 		default:
+			app.replyText(event.ReplyToken, "YOYO")
 			log.Printf("Unknown event: %v", event)
 		}
 	}
+
+
+
 }
 
 func (app *KitchenSink) handleText(message *linebot.TextMessage, replyToken string, source *linebot.EventSource) error {
